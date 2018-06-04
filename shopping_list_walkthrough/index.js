@@ -50,14 +50,42 @@ function renderShoppingList() {
   $('.js-shopping-list').html(shoppingListItemsString);
 }
 
+function addItemToShoppingList(itemName) {
+  console.log(`Adding "${itemName}" to shopping list`);
+  STORE.push({name: itemName, checked: false});
+}
+
 function handleNewItemSubmit() {
   //this function will be responsible for when users add a new shopping list item
   console.log('`handleNewItemSubmit` ran');
+
+  //listen for new submission
+  $('#js-shopping-list-form').submit(function(event) {
+    event.preventDefault();
+    console.log('`handleNewItemSubmit` ran');
+
+    const newItemName = $('.js-shopping-list-entry').val();
+    console.log(newItemName);
+
+    //clear input field
+    $('.js-shopping-list-entry').val(" ");
+
+    //add item to STORE
+    addItemToShoppingList(newItemName);
+    renderShoppingList();
+
+  });
+
 }
 
 function handleItemCheckClicked() {
   //this function will be responsible for when users click the "check" button on a shopping list item
   console.log('`handleNewItemSubmit` ran');
+
+  //listern for when user clicks check button
+  //retrieve item's index in STORE from data-attribute
+  //toggle checked property for item at that index
+  //re-render shopping list
 }
 
 function handleDeleteItemClicked() {
