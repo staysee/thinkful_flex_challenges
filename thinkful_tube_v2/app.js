@@ -1,27 +1,24 @@
 const YOUTUBE_SEARCH_URL = 'https://www.googleapis.com/youtube/v3/search';
 const API_KEY = config.API_KEY;
+let search_term = null;
 
-//get data from api
-function getDataFromApi(searchTerm, callback){
+// API CALL
+function getDataFromApi(searchTerm, pagekey, callback){
+  search_term = searchTerm;
   const query = {
     part: 'snippet',
     key: API_KEY,
     q: `${searchTerm} in:title`,
     type: 'video',
-
+    maxResults: 6,
+    pageToken: pagekey
   }
 
   $.getJSON(YOUTUBE_SEARCH_URL, query, callback);
 }
 
-// display youtube search data
-function displayYouTubeSearchData(data){
-  const results = data.items.map((item, index) => renderResult(item));
-  console.log(data);
-  $('.js-results').html(results);
-}
 
-// render result
+// RENDER RESULTS
 function renderResult(result){
   const videoID = result.id.videoId;
   const channelID = result.snippet.channelId;
@@ -36,28 +33,52 @@ function renderResult(result){
   `
 }
 
+function displayYouTubeSearchData(data){
+  const results = data.items.map((item, index) => renderResult(item));
+  // console.log(data);
+  $('.js-results').html(results);
+  $('.js-total-results').html(`${data.pageInfo.totalResults} result(s) found`);
+  getNextPage(data.nextPageToken);
+  getPrevPage(data.prevPageToken);
+}
 
-// get next page for more search results
+// PAGES
+function getNextPage(pageToken){
+  console.log(`Next Page Token: ${pageToken}`);
+  if (!$('#nextPage').hasClass("hidden")){
+    $('#nextPage').addClass("hidden");
+  }
 
-// get previous page for previous search results
+  if (pageToken !== null && pageToken !== undefined){
+    $('#nextPage').removeClass("hidden");
+    $('#nextPage').on('click', function(event){
+      getDataFromApi(search_term, pageToken, displayYouTubeSearchData);
+    })
+  }
+}
+
+function getPrevPage(pageToken){
+  console.log(`Prev Page Token: ${pageToken}`);
+  $('#prevPage').addClass("hidden");
+  if (pageToken !== null && pageToken !== undefined){
+    $('#prevPage').removeClass("hidden");
+    $('#prevPage').on('click', function(event){
+      getDataFromApi(search_term, pageToken, displayYouTubeSearchData);
+    })
+  }
+}
 
 
 // EVENT LISTENER
-
-//handleSearch
 function watchSubmit() {
   $('.js-search-form').submit(function(event){
     event.preventDefault();
     const queryTarget = $(event.currentTarget).find('.js-query');
     const query = queryTarget.val();
     console.log(`submited search query: ${query}`);
+    queryTarget.val("");  //clears input
 
-    //clears search field
-    queryTarget.val("");
-
-    getDataFromApi(query, displayYouTubeSearchData)
-
-
+    getDataFromApi(query, null, displayYouTubeSearchData)
   })
 }
 
