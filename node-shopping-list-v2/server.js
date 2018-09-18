@@ -52,7 +52,7 @@ app.get('/recipes', (req, res) => {
   res.json(Recipes.get());
 })
 
-app.post('/recipes', (req, res) => {
+app.post('/recipes', jsonParser, (req, res) => {
   // ensure `name` and `ingredients` are in request body
   const requiredFields = ['name', 'ingredients'];
   for (let i=0; i<requiredFields.length; i++){
@@ -64,7 +64,7 @@ app.post('/recipes', (req, res) => {
     }
   }
 
-  const item = ShoppingList.create(req.body.name, req.body.budget);
+  const item = Recipes.create(req.body.name, req.body.ingredients);
   res.status(201).json(item);
 });
 
