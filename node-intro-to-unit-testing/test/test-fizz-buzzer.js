@@ -10,7 +10,7 @@ describe('fizzBuzzer', function(){
 	})
 
 	it('it should return "buzz" for multiples of 5', function(){
-    [5, 10, 15].forEach(function(input){
+    [5, 10, 20].forEach(function(input){
       expect(fizzBuzzer(input)).to.equal('buzz');
     })
 	})
@@ -23,7 +23,7 @@ describe('fizzBuzzer', function(){
 
 	it('it should return the number if not multiples of 3 or 5', function(){
     [1, 4, 16].forEach(function(input){
-      expect(fizzBuzzer(input)).to.equal('input');
+      expect(fizzBuzzer(input)).to.equal(input);
     })
 	})
 
